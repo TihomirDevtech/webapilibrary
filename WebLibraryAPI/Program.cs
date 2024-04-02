@@ -1,7 +1,9 @@
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using WebLibraryAPI.Contracts.Services;
 using WebLibraryAPI.Models.Auth;
 using WebLibraryAPI.OptionsSetup;
+using WebLibraryAPI.Repositories;
 using WebLibraryAPI.Services;
 
 namespace WebLibraryAPI
@@ -22,6 +24,35 @@ namespace WebLibraryAPI
             builder.Services.ConfigureOptions<JwtOptionsSetup>();
             builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IJwtProvider, JwtProvider>();
+            builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer"
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+                        });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -36,7 +67,6 @@ namespace WebLibraryAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

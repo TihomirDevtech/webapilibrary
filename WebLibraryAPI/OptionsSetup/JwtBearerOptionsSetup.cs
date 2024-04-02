@@ -6,28 +6,16 @@ using WebLibraryAPI.Models.Auth;
 
 namespace WebLibraryAPI.OptionsSetup
 {
-    public class JwtBearerOptionsSetup : IConfigureOptions<JwtBearerOptions>
+    public class JwtBearerOptionsSetup(IOptions<JwtOptions> jwtOptions) : IPostConfigureOptions<JwtBearerOptions>
     {
-        private readonly JwtOptions _jwtOptions;
+        private readonly JwtOptions _jwtOptions = jwtOptions.Value;
 
-        public JwtBearerOptionsSetup(IOptions<JwtOptions> jwtOptions)
+        public void PostConfigure(string? name, JwtBearerOptions options)
         {
-            _jwtOptions = jwtOptions.Value;
-        }
-
-        public void Configure(JwtBearerOptions options)
-        {
-            options.TokenValidationParameters = new()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = _jwtOptions.Issuer,
-                ValidAudience = _jwtOptions.Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(_jwtOptions.SecretKey))
-            };
+            options.TokenValidationParameters.ValidIssuer = _jwtOptions.Issuer;
+            options.TokenValidationParameters.ValidAudience = _jwtOptions.Audience;
+            options.TokenValidationParameters.IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
         }
     }
 }

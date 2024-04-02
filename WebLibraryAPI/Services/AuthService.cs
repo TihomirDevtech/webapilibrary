@@ -1,4 +1,5 @@
-﻿using WebLibraryAPI.Models.Auth;
+﻿using WebLibraryAPI.Contracts.Services;
+using WebLibraryAPI.Models.Auth;
 using WebLibraryAPI.Repositories;
 
 namespace WebLibraryAPI.Services
@@ -7,7 +8,7 @@ namespace WebLibraryAPI.Services
     {
         private readonly IMemberRepository _memberRepository;
         private readonly IJwtProvider _jwtProvider;
-        private readonly Dictionary<string, string> _users = new();
+        private readonly Dictionary<string, string> _users = [];
         public AuthService(IMemberRepository memberRepository, IJwtProvider jwtProvider)
         {
             _memberRepository = memberRepository;
@@ -29,15 +30,5 @@ namespace WebLibraryAPI.Services
             return token;
             //Return JWT
         }
-    }
-
-    public interface IJwtProvider
-    {
-        string Generate(Member member);
-    }
-
-    public interface IAuthService
-    {
-        public Task<string> Login(string memberEmail);
     }
 }
