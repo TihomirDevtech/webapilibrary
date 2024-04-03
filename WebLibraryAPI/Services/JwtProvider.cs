@@ -15,12 +15,12 @@ namespace WebLibraryAPI.Services
         {
             _options = options.Value;
         }
-        public string Generate(Member member)
+        public string Generate(int memberId, string memberEmail)
         {
             var claims = new Claim[]
             {
-            new(JwtRegisteredClaimNames.Sub, member.Id.ToString()),
-            new(JwtRegisteredClaimNames.Email, member.Email)
+            new(JwtRegisteredClaimNames.Sub, memberId.ToString()),
+            new(JwtRegisteredClaimNames.Email, memberEmail)
             };
 
             var signInCreds = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey)),

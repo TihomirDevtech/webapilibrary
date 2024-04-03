@@ -2,5 +2,5 @@
 
 public interface IAuthService
 {
-    public Task<string> Login(string memberEmail);
+    public Task<string> Login(int memberId, string memberEmail);
 }

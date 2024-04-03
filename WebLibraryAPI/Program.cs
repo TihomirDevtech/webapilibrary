@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using WebLibraryAPI.Contracts.Services;
+using WebLibraryAPI.Data;
 using WebLibraryAPI.Models.Auth;
 using WebLibraryAPI.OptionsSetup;
 using WebLibraryAPI.Repositories;
@@ -26,6 +28,9 @@ namespace WebLibraryAPI
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IJwtProvider, JwtProvider>();
             builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
+            var connectionString = builder.Configuration.GetConnectionString("DefaultConn");
+            builder.Services.AddDbContext<LibraryDbContext>(options => options.UseSqlServer(connectionString));
 
             builder.Services.AddSwaggerGen(options =>
             {
