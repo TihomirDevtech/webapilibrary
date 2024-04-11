@@ -36,4 +36,5 @@ public class Book
     public string BookDesc { get; set; }
 
     public DateOnly DateAdded { get; set; }
+    public DateOnly PublishedDate { get; set; }
 }

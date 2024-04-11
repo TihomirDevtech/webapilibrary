@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebLibraryAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initialmigration : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,8 @@ namespace WebLibraryAPI.Migrations
                 {
                     CommentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
+                    MemberId = table.Column<int>(type: "int", nullable: false),
+                    BookId = table.Column<int>(type: "int", nullable: false),
                     Headline = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Comment = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     DateCommented = table.Column<DateOnly>(type: "date", nullable: false)
@@ -25,17 +26,6 @@ namespace WebLibraryAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BookComments", x => x.CommentId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Favourites",
-                columns: table => new
-                {
-                    SourceMemberId = table.Column<int>(type: "int", nullable: false),
-                    LikedBookId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
                 });
 
             migrationBuilder.CreateTable(
@@ -68,7 +58,8 @@ namespace WebLibraryAPI.Migrations
                     TypeOfFile = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Author = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BookDesc = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    DateAdded = table.Column<DateOnly>(type: "date", nullable: false)
+                    DateAdded = table.Column<DateOnly>(type: "date", nullable: false),
+                    PublishedDate = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -81,9 +72,34 @@ namespace WebLibraryAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Favourites",
+                columns: table => new
+                {
+                    FavouriteBookId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MemberId = table.Column<int>(type: "int", nullable: false),
+                    LikedBookId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Favourites", x => x.FavouriteBookId);
+                    table.ForeignKey(
+                        name: "FK_Favourites_Members_MemberId",
+                        column: x => x.MemberId,
+                        principalTable: "Members",
+                        principalColumn: "MemberId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Books_MemberId",
                 table: "Books",
+                column: "MemberId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favourites_MemberId",
+                table: "Favourites",
                 column: "MemberId");
         }
 

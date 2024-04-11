@@ -88,6 +88,9 @@ namespace WebLibraryAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<DateOnly>("PublishedDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(60)
@@ -113,7 +116,7 @@ namespace WebLibraryAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
 
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.Property<string>("Comment")
@@ -129,6 +132,9 @@ namespace WebLibraryAPI.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
                     b.HasKey("CommentId");
 
                     b.ToTable("BookComments");
@@ -136,11 +142,21 @@ namespace WebLibraryAPI.Migrations
 
             modelBuilder.Entity("WebLibraryAPI.Models.Domain.FavouriteBook", b =>
                 {
+                    b.Property<int>("FavouriteBookId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FavouriteBookId"));
+
                     b.Property<int>("LikedBookId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SourceMemberId")
+                    b.Property<int>("MemberId")
                         .HasColumnType("int");
+
+                    b.HasKey("FavouriteBookId");
+
+                    b.HasIndex("MemberId");
 
                     b.ToTable("Favourites");
                 });
@@ -148,7 +164,18 @@ namespace WebLibraryAPI.Migrations
             modelBuilder.Entity("WebLibraryAPI.Models.Domain.Book", b =>
                 {
                     b.HasOne("WebLibraryAPI.Models.Auth.Member", "Member")
-                        .WithMany("BooksIAdded")
+                        .WithMany("MyBooks")
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Member");
+                });
+
+            modelBuilder.Entity("WebLibraryAPI.Models.Domain.FavouriteBook", b =>
+                {
+                    b.HasOne("WebLibraryAPI.Models.Auth.Member", "Member")
+                        .WithMany("FavouriteBooks")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -158,7 +185,9 @@ namespace WebLibraryAPI.Migrations
 
             modelBuilder.Entity("WebLibraryAPI.Models.Auth.Member", b =>
                 {
-                    b.Navigation("BooksIAdded");
+                    b.Navigation("FavouriteBooks");
+
+                    b.Navigation("MyBooks");
                 });
 #pragma warning restore 612, 618
         }

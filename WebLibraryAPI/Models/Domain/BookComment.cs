@@ -9,8 +9,10 @@ public class BookComment
     [Key]
     public int CommentId { get; set; }
 
-    [Display(Name = "Author")]
-    public int AuthorId { get; set; }
+    [Display(Name = "Member")]
+    public int MemberId { get; set; }
+
+    public int BookId { get; set; }
 
     [Display(Name = "Headline")]
     [Required(ErrorMessage = "Please enter headline")]

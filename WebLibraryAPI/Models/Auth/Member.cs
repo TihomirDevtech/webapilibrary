@@ -26,5 +26,6 @@ public class Member
 
     public DateOnly DateJoined { get; set; }
 
-    public virtual ICollection<Book> BooksIAdded { get; set; }
+    public virtual ICollection<Book> MyBooks { get; set; }
+    public virtual ICollection<FavouriteBook> FavouriteBooks { get; set; }
 }
